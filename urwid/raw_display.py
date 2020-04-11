@@ -25,6 +25,8 @@ from __future__ import division, print_function
 Direct terminal UI implementation
 """
 
+import logging
+log = logging.getLogger(__name__)
 import os
 import select
 import struct
@@ -144,9 +146,12 @@ class Screen(BaseScreen, RealTerminal):
         """
         frame -- will always be None when the GLib event loop is being used.
         """
-
+        log.debug("_sigcont_handler pre-stop")
         self.stop()
+        log.debug("_sigcont_handler pre-start")
         self.start()
+        self.start()
+        log.debug("_sigcont_handler post-start")
         self._sigwinch_handler(None, None)
 
     def signal_init(self):
@@ -378,6 +383,7 @@ class Screen(BaseScreen, RealTerminal):
         This method is only called by `hook_event_loop`, so if you override
         that, you can safely ignore this.
         """
+        log.debug("Screen.get_input_descriptors, started=%s", self._started)
         if not self._started:
             return []
 
@@ -416,6 +422,7 @@ class Screen(BaseScreen, RealTerminal):
             wrapper = lambda: self.parse_input(
                 event_loop, callback, self.get_available_raw_input())
         fds = self.get_input_descriptors()
+        log.debug("hook_event_loop fds=%s", fds)
         handles = [event_loop.watch_file(fd, wrapper) for fd in fds]
         self._current_event_loop_handles = handles
 

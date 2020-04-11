@@ -20,6 +20,9 @@
 
 from __future__ import division, print_function
 
+import logging 
+log = logging.getLogger(__name__)
+
 import os
 import sys
 
@@ -778,6 +781,8 @@ class BaseScreen(with_metaclass(signals.MetaSignals, object)):
         super(BaseScreen,self).__init__()
         self._palette = {}
         self._started = False
+        log.debug("init BaseScreen")
+
 
     started = property(lambda self: self._started)
 
@@ -794,6 +799,7 @@ class BaseScreen(with_metaclass(signals.MetaSignals, object)):
         You shouldn't override this method in a subclass; instead, override
         :meth:`_start`.
         """
+        log.debug("start basescreen, started=%s", self._started)
         if not self._started:
             self._started = True
             self._start(*args, **kwargs)
@@ -805,6 +811,7 @@ class BaseScreen(with_metaclass(signals.MetaSignals, object)):
     def stop(self):
         if self._started:
             self._stop()
+        log.debug("stop basescreen")
         self._started = False
 
     def _stop(self):

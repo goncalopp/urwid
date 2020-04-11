@@ -23,6 +23,9 @@
 
 from __future__ import division, print_function
 
+import logging
+log = logging.getLogger(__name__)
+
 import time
 import heapq
 import select
@@ -335,6 +338,7 @@ class MainLoop(object):
         Twisted and asyncio loops won't stop automatically when
         :exc:`ExitMainLoop` (or anything else) is raised.
         """
+        log.debug("MainLoop.start")
         self.screen.start()
 
         if self.handle_mouse:
@@ -369,6 +373,9 @@ class MainLoop(object):
         self.screen.stop()
 
     def _reset_input_descriptors(self):
+        logging.debug("_reset_input_descriptors")
+        import traceback
+        log.debug(traceback.format_stack())
         self.screen.unhook_event_loop(self.event_loop)
         self.screen.hook_event_loop(self.event_loop, self._update)
 
@@ -693,6 +700,7 @@ class SelectEventLoop(EventLoop):
     def __init__(self):
         self._alarms = []
         self._watch_files = {}
+        log.debug("SelectEventLoop init")
         self._idle_handle = 0
         self._idle_callbacks = {}
         self._tie_break = count()
@@ -799,6 +807,7 @@ class SelectEventLoop(EventLoop):
         """
         A single iteration of the event loop
         """
+        log.debug("loop, _watch_files=%s", self._watch_files)
         fds = list(self._watch_files.keys())
         if self._alarms or self._did_something:
             if self._alarms:
